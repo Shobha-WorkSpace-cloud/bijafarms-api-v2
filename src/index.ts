@@ -1,6 +1,8 @@
 import express from 'express';
+import expensesRouter from './expenses';
 const app = express();
 
+app.use('/expenses', expensesRouter);
 app.get('/', (req, res) => {
   const name = process.env.NAME || 'World';
   res.send(`Hello ${name}!`);

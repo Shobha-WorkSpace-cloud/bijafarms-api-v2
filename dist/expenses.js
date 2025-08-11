@@ -35,20 +35,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getExpenses = void 0;
-var supabase_js_1 = require("@supabase/supabase-js");
-// Assuming you have your Supabase URL and Anon Key stored in environment variables
-var supabaseUrl = 'https://dbmthxrbrlgkuhiznsul.supabase.co';
-var supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRibXRoeHJicmxna3VoaXpuc3VsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NTU0ODEsImV4cCI6MjA3MDEzMTQ4MX0.b6gFaZcT5AdVPomr7U-5Y2S_slIqza_4zeCtkC5s8Kc';
-var supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseAnonKey);
-var getExpenses = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var express_1 = __importDefault(require("express"));
+var supabaseClient_1 = __importDefault(require("./supabaseClient"));
+var router = express_1.default.Router();
+router.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, data, error, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, supabase
+                return [4 /*yield*/, supabaseClient_1.default
                         .from('expenses')
                         .select('*')];
             case 1:
@@ -67,6 +67,7 @@ var getExpenses = function (req, res) { return __awaiter(void 0, void 0, void 0,
             case 3: return [2 /*return*/];
         }
     });
-}); };
-exports.getExpenses = getExpenses;
+}); });
+// Export the router so it can be used in other files
+exports.default = router;
 //# sourceMappingURL=expenses.js.map

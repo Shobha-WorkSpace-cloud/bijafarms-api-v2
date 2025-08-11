@@ -4,7 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
+var expenses_1 = __importDefault(require("./expenses"));
 var app = (0, express_1.default)();
+app.use('/expenses', expenses_1.default);
 app.get('/', function (req, res) {
     var name = process.env.NAME || 'World';
     res.send("Hello ".concat(name, "!"));
