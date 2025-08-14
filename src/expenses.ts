@@ -23,38 +23,36 @@ const writeExpenses = async (expenses: ExpenseRecord[]): Promise<void> => {
       return;
     }
 
-    const expn = await Promise.all(
-      expenses.map(async (expense) => {
-        // Fetch category from Supabase
-        const { data: cat, error } = await supabase
-          .from('categories')
-          .select("id")
-          .eq('name', expense.category);
+    console.log("Processing expenses for insert:", expenses);
 
-        if (error) {
-          console.error(`Error fetching category for ${expense.category}:`, error);
-        }
+    // For now, let's directly insert expenses without category lookup
+    // until we set up the categories table properly
+    const expn = expenses.map((expense) => {
+      return {
+        id: expense.id,
+        date: expense.date,
+        type: expense.type,
+        description: expense.description,
+        amount: expense.amount,
+        paidBy: expense.paidBy,
+        category: expense.category, // Use the category name directly for now
+        subCategory: expense.subCategory,
+        source: expense.source,
+        notes: expense.notes,
+      };
+    });
 
-        // You can use cat[0] if you expect a single category, or handle as needed
-        return {
-          id: expense.id,
-          date: expense.date,
-          type: expense.type,
-          description: expense.description,
-          amount: expense.amount,
-          paidBy: expense.paidBy,
-          category: cat && cat.length > 0 ? cat[0].id : expense.category,
-          subCategory: expense.subCategory,
-          source: expense.source,
-          notes: expense.notes,
-        };
-      })
-    );
+    console.log("Prepared expenses for Supabase:", expn);
 
     const { data, error } = await supabase
       .from('expenses')
       .insert(expn)
       .select();
+
+    if (error) {
+      console.error("Supabase insert error:", error);
+      throw error;
+    }
 
     console.log("Expenses written to Supabase:", data);
   } catch (error) {
