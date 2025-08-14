@@ -25,36 +25,40 @@ const writeExpenses = async (expenses: ExpenseRecord[]): Promise<void> => {
 
     console.log("Processing expenses for insert:", expenses);
 
-    // For now, let's directly insert expenses without category lookup
-    // until we set up the categories table properly
-    const expn = expenses.map((expense) => {
-      return {
-        id: expense.id,
-        date: expense.date,
-        type: expense.type,
+    // Let's try inserting one expense first to see the exact error
+    for (const expense of expenses) {
+      console.log("Attempting to insert expense:", expense);
+
+      // Try with just the core fields that definitely exist
+      const expenseData = {
         description: expense.description,
         amount: expense.amount,
+        category: expense.category,
+        type: expense.type,
+        date: expense.date,
         paidBy: expense.paidBy,
-        category: expense.category, // Use the category name directly for now
-        subCategory: expense.subCategory,
-        source: expense.source,
-        notes: expense.notes,
+        subCategory: expense.subCategory || null,
+        source: expense.source || null,
+        notes: expense.notes || null,
       };
-    });
 
-    console.log("Prepared expenses for Supabase:", expn);
+      console.log("Inserting expense data:", expenseData);
 
-    const { data, error } = await supabase
-      .from('expenses')
-      .insert(expn)
-      .select();
+      const { data, error } = await supabase
+        .from('expenses')
+        .insert([expenseData])
+        .select();
 
-    if (error) {
-      console.error("Supabase insert error:", error);
-      throw error;
+      if (error) {
+        console.error("Supabase insert error for expense:", expense.description);
+        console.error("Full error details:", JSON.stringify(error, null, 2));
+        throw error;
+      }
+
+      console.log("Successfully inserted expense:", data);
     }
 
-    console.log("Expenses written to Supabase:", data);
+    console.log("All expenses written successfully");
   } catch (error) {
     console.error("Error writing expenses:", error);
     throw error;
