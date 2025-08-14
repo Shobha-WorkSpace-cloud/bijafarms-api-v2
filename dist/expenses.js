@@ -39,6 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.writeExpenses = void 0;
 var express_1 = __importDefault(require("express"));
 var supabaseClient_1 = __importDefault(require("./supabaseClient"));
 var router = express_1.default.Router();
@@ -99,6 +100,7 @@ var writeExpenses = function (expenses) { return __awaiter(void 0, void 0, void 
         }
     });
 }); };
+exports.writeExpenses = writeExpenses;
 router.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, data, error, error_2;
     return __generator(this, function (_b) {
@@ -120,6 +122,33 @@ router.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, f
                 error_2 = _b.sent();
                 console.error('Unexpected error:', error_2.message);
                 res.status(500).json({ error: 'An unexpected error occurred.' });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.post('/write', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var expenses, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                expenses = req.body.expenses;
+                if (!expenses || !Array.isArray(expenses)) {
+                    return [2 /*return*/, res.status(400).json({ error: 'Invalid request: expenses array is required' })];
+                }
+                return [4 /*yield*/, writeExpenses(expenses)];
+            case 1:
+                _a.sent();
+                res.status(200).json({
+                    message: "Successfully wrote ".concat(expenses.length, " expenses to database"),
+                    count: expenses.length
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                error_3 = _a.sent();
+                console.error('Error in POST /expenses/write:', error_3.message);
+                res.status(500).json({ error: error_3.message });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
