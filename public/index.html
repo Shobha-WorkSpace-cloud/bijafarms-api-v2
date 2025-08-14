@@ -651,14 +651,8 @@
                 return;
             }
 
-            const pendingCount = currentExpenses.length;
-            const savedCount = databaseExpenses.length;
-
             summary.style.display = 'block';
-            summary.innerHTML = `
-                Found ${totalItems} expenses total:
-                ${pendingCount} pending 📝, ${savedCount} saved 💾
-            `;
+            summary.innerHTML = `Found ${totalItems} expenses total 💾`;
         }
 
         function updatePagination(page, totalPages, startItem, endItem, totalItems) {
