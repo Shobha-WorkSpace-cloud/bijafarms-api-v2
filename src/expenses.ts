@@ -97,14 +97,26 @@ router.get('/', async (req: Request, res: Response) => {
   try {
     const { data, error } = await supabase
       .from('expenses')
-      .select('*');
+      .select(`
+        *,
+        categories (
+          id,
+          name
+        )
+      `);
 
     if (error) {
       console.error('Error fetching expenses:', error.message);
       return res.status(500).json({ error: error.message });
     }
 
-    res.status(200).json(data);
+    // Transform data to include category name directly
+    const transformedData = data?.map(expense => ({
+      ...expense,
+      category: expense.categories?.name || 'Unknown'
+    }));
+
+    res.status(200).json(transformedData);
   } catch (error: any) {
     console.error('Unexpected error:', error.message);
     res.status(500).json({ error: 'An unexpected error occurred.' });

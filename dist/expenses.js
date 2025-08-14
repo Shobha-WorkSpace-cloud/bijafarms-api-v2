@@ -44,28 +44,57 @@ var express_1 = __importDefault(require("express"));
 var supabaseClient_1 = __importDefault(require("./supabaseClient"));
 var router = express_1.default.Router();
 var writeExpenses = function (expenses) { return __awaiter(void 0, void 0, void 0, function () {
-    var _i, expenses_1, expense, expenseData, _a, data, insertError, error_1;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _i, expenses_1, expense, _a, categoryData, categoryError, _b, newCategory, createError, categoryId, categoryId, expenseData, _c, data, insertError, error_1;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
-                _b.trys.push([0, 5, , 6]);
+                _d.trys.push([0, 9, , 10]);
                 if (!expenses || expenses.length === 0) {
                     console.warn("No expenses to write");
                     return [2 /*return*/];
                 }
                 console.log("Processing expenses for insert:", expenses);
                 _i = 0, expenses_1 = expenses;
-                _b.label = 1;
+                _d.label = 1;
             case 1:
-                if (!(_i < expenses_1.length)) return [3 /*break*/, 4];
+                if (!(_i < expenses_1.length)) return [3 /*break*/, 8];
                 expense = expenses_1[_i];
                 console.log("Attempting to insert expense:", expense);
+                return [4 /*yield*/, supabaseClient_1.default
+                        .from('categories')
+                        .select('id')
+                        .eq('name', expense.category)
+                        .single()];
+            case 2:
+                _a = _d.sent(), categoryData = _a.data, categoryError = _a.error;
+                if (!categoryError) return [3 /*break*/, 4];
+                console.error("Error fetching category for ".concat(expense.category, ":"), categoryError);
+                return [4 /*yield*/, supabaseClient_1.default
+                        .from('categories')
+                        .insert([{ name: expense.category }])
+                        .select('id')
+                        .single()];
+            case 3:
+                _b = _d.sent(), newCategory = _b.data, createError = _b.error;
+                if (createError) {
+                    console.error("Error creating category ".concat(expense.category, ":"), createError);
+                    throw createError;
+                }
+                console.log("Created new category: ".concat(expense.category, " with ID: ").concat(newCategory.id));
+                categoryId = newCategory.id;
+                return [3 /*break*/, 5];
+            case 4:
+                categoryId = categoryData.id;
+                console.log("Found category ".concat(expense.category, " with ID: ").concat(categoryId));
+                _d.label = 5;
+            case 5:
                 expenseData = {
                     description: expense.description,
                     amount: expense.amount,
                     type: expense.type,
                     date: expense.date,
                     paidBy: expense.paidBy,
+                    categoryId: categoryId,
                     subCategory: expense.subCategory || null,
                     source: expense.source || null,
                     notes: expense.notes || null,
@@ -75,26 +104,26 @@ var writeExpenses = function (expenses) { return __awaiter(void 0, void 0, void 
                         .from('expenses')
                         .insert([expenseData])
                         .select()];
-            case 2:
-                _a = _b.sent(), data = _a.data, insertError = _a.error;
+            case 6:
+                _c = _d.sent(), data = _c.data, insertError = _c.error;
                 if (insertError) {
                     console.error("Supabase insert error for expense:", expense.description);
                     console.error("Full error details:", JSON.stringify(insertError, null, 2));
                     throw insertError;
                 }
                 console.log("Successfully inserted expense:", data);
-                _b.label = 3;
-            case 3:
+                _d.label = 7;
+            case 7:
                 _i++;
                 return [3 /*break*/, 1];
-            case 4:
+            case 8:
                 console.log("All expenses written successfully");
-                return [3 /*break*/, 6];
-            case 5:
-                error_1 = _b.sent();
+                return [3 /*break*/, 10];
+            case 9:
+                error_1 = _d.sent();
                 console.error("Error writing expenses:", error_1);
                 throw error_1;
-            case 6: return [2 /*return*/];
+            case 10: return [2 /*return*/];
         }
     });
 }); };
