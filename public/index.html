@@ -732,50 +732,6 @@
             applyFiltersAndSort();
         }
         
-        function removeExpense(index) {
-            currentExpenses.splice(index, 1);
-            updateCategoryFilter();
-            applyFiltersAndSort();
-            showMessage('Expense removed from list.', 'success');
-        }
-
-        async function submitAllExpenses() {
-            if (currentExpenses.length === 0) {
-                showMessage('No expenses to save. Add some expenses first!', 'error');
-                return;
-            }
-
-            try {
-                const response = await fetch('/expenses/write', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ expenses: currentExpenses })
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    showMessage(`Successfully saved ${currentExpenses.length} expenses to database!`, 'success');
-
-                    // Move saved expenses to database expenses
-                    databaseExpenses.push(...currentExpenses);
-                    currentExpenses = [];
-
-                    updateCategoryFilter();
-                    currentPage = 1;
-                    applyFiltersAndSort();
-
-                    // Refresh from server to get any server-side changes
-                    loadExpenses();
-                } else {
-                    showMessage(`Error: ${result.error}`, 'error');
-                }
-            } catch (error) {
-                showMessage(`Network error: ${error.message}`, 'error');
-            }
-        }
 
         async function loadExpenses() {
             try {
