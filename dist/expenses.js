@@ -63,7 +63,6 @@ var writeExpenses = function (expenses) { return __awaiter(void 0, void 0, void 
                 expenseData = {
                     description: expense.description,
                     amount: expense.amount,
-                    category: expense.category,
                     type: expense.type,
                     date: expense.date,
                     paidBy: expense.paidBy,
