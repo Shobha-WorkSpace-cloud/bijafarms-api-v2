@@ -796,15 +796,18 @@
             const messageDiv = document.getElementById('statusMessage');
             messageDiv.className = `status-message ${type}-message`;
             messageDiv.textContent = message;
-            
+
             setTimeout(() => {
                 messageDiv.className = '';
                 messageDiv.textContent = '';
             }, 5000);
         }
-        
-        // Load expenses on page load
-        loadExpenses();
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadExpenses();
+            applyFiltersAndSort();
+        });
     </script>
 </body>
 </html>
