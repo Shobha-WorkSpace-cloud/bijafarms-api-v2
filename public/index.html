@@ -490,25 +490,7 @@
         }
 
         function updateCategoryFilter() {
-            const categoryFilter = document.getElementById('categoryFilter');
-            const currentValue = categoryFilter.value;
-            const categories = new Set();
-
-            databaseExpenses.forEach(expense => {
-                if (expense.category) {
-                    categories.add(expense.category);
-                }
-            });
-
-            categoryFilter.innerHTML = '<option value="">All Categories</option>';
-            Array.from(categories).sort().forEach(category => {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                categoryFilter.appendChild(option);
-            });
-
-            categoryFilter.value = currentValue;
+            // Category filter removed since category column doesn't exist
         }
 
         function applyFiltersAndSort() {
