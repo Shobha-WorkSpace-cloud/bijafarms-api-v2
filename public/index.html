@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker - Test WriteExpenses</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .main-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .title {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .expense-form {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .expenses-list {
+            margin-top: 30px;
+        }
+        .expense-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .expense-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .expense-description {
+            font-weight: bold;
+            color: #333;
+        }
+        .expense-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .expense-details {
+            font-size: 12px;
+            color: #666;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+        }
+        .status-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .section-divider {
+            border-top: 2px solid #e9ecef;
+            margin: 30px 0;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            .expense-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1 class="title">📊 Expense Tracker - Test Interface</h1>
+        
+        <form id="expenseForm" class="expense-form">
+            <div class="two-column">
+                <div class="form-group">
+                    <label class="form-label" for="description">Description:</label>
+                    <input type="text" id="description" class="form-input" required placeholder="e.g., Grocery shopping">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="amount">Amount:</label>
+                    <input type="number" id="amount" class="form-input" step="0.01" required placeholder="0.00">
+                </div>
+            </div>
+            
+            <div class="two-column">
+                <div class="form-group">
+                    <label class="form-label" for="category">Category:</label>
+                    <input type="text" id="category" class="form-input" required placeholder="e.g., Food, Transport, Bills">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="subCategory">Sub Category:</label>
+                    <input type="text" id="subCategory" class="form-input" placeholder="e.g., Groceries, Gas">
+                </div>
+            </div>
+            
+            <div class="two-column">
+                <div class="form-group">
+                    <label class="form-label" for="paidBy">Paid By:</label>
+                    <input type="text" id="paidBy" class="form-input" required placeholder="e.g., John, Credit Card">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="type">Type:</label>
+                    <select id="type" class="form-input" required>
+                        <option value="">Select type</option>
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="two-column">
+                <div class="form-group">
+                    <label class="form-label" for="source">Source:</label>
+                    <input type="text" id="source" class="form-input" placeholder="e.g., Cash, Bank Transfer">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="date">Date:</label>
+                    <input type="date" id="date" class="form-input" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="notes">Notes:</label>
+                <textarea id="notes" class="form-input" rows="3" placeholder="Additional notes..."></textarea>
+            </div>
+            
+            <div>
+                <button type="submit" class="btn-primary">Add Expense</button>
+                <button type="button" class="btn-secondary" onclick="clearForm()">Clear Form</button>
+            </div>
+        </form>
+        
+        <div id="statusMessage"></div>
+        
+        <div class="section-divider"></div>
+        
+        <div class="expenses-list">
+            <h2>📋 Current Expenses</h2>
+            <div id="expensesList"></div>
+            <button type="button" class="btn-primary" onclick="loadExpenses()">Refresh Expenses</button>
+            <button type="button" class="btn-primary" onclick="submitAllExpenses()" style="margin-left: 10px;">💾 Save All to Database</button>
+        </div>
+    </div>
+
+    <script>
+        let currentExpenses = [];
+        
+        // Set today's date as default
+        document.getElementById('date').valueAsDate = new Date();
+        
+        document.getElementById('expenseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            addExpense();
+        });
+        
+        function addExpense() {
+            const expense = {
+                id: Date.now().toString(),
+                description: document.getElementById('description').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                category: document.getElementById('category').value,
+                subCategory: document.getElementById('subCategory').value,
+                paidBy: document.getElementById('paidBy').value,
+                type: document.getElementById('type').value,
+                source: document.getElementById('source').value,
+                date: document.getElementById('date').value,
+                notes: document.getElementById('notes').value
+            };
+            
+            currentExpenses.push(expense);
+            displayExpenses();
+            clearForm();
+            showMessage('Expense added to list! Click "Save All to Database" to save to Supabase.', 'success');
+        }
+        
+        function clearForm() {
+            document.getElementById('expenseForm').reset();
+            document.getElementById('date').valueAsDate = new Date();
+        }
+        
+        function displayExpenses() {
+            const container = document.getElementById('expensesList');
+            container.innerHTML = '';
+            
+            if (currentExpenses.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">No expenses added yet. Add some expenses above!</p>';
+                return;
+            }
+            
+            currentExpenses.forEach((expense, index) => {
+                const expenseDiv = document.createElement('div');
+                expenseDiv.className = 'expense-item';
+                expenseDiv.innerHTML = `
+                    <div class="expense-header">
+                        <div class="expense-description">${expense.description}</div>
+                        <div class="expense-amount">$${expense.amount.toFixed(2)}</div>
+                    </div>
+                    <div class="expense-details">
+                        <div><strong>Category:</strong> ${expense.category}</div>
+                        <div><strong>Sub-category:</strong> ${expense.subCategory || 'N/A'}</div>
+                        <div><strong>Paid by:</strong> ${expense.paidBy}</div>
+                        <div><strong>Type:</strong> ${expense.type}</div>
+                        <div><strong>Source:</strong> ${expense.source || 'N/A'}</div>
+                        <div><strong>Date:</strong> ${expense.date}</div>
+                    </div>
+                    ${expense.notes ? `<div style="margin-top: 8px;"><strong>Notes:</strong> ${expense.notes}</div>` : ''}
+                    <button onclick="removeExpense(${index})" class="btn-secondary" style="margin-top: 10px;">Remove</button>
+                `;
+                container.appendChild(expenseDiv);
+            });
+        }
+        
+        function removeExpense(index) {
+            currentExpenses.splice(index, 1);
+            displayExpenses();
+            showMessage('Expense removed from list.', 'success');
+        }
+        
+        async function submitAllExpenses() {
+            if (currentExpenses.length === 0) {
+                showMessage('No expenses to save. Add some expenses first!', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/expenses/write', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ expenses: currentExpenses })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage(`Successfully saved ${currentExpenses.length} expenses to database!`, 'success');
+                    currentExpenses = [];
+                    displayExpenses();
+                    loadExpenses();
+                } else {
+                    showMessage(`Error: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`Network error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function loadExpenses() {
+            try {
+                const response = await fetch('/expenses');
+                const expenses = await response.json();
+                
+                if (response.ok) {
+                    displayDatabaseExpenses(expenses);
+                } else {
+                    showMessage(`Error loading expenses: ${expenses.error}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`Network error: ${error.message}`, 'error');
+            }
+        }
+        
+        function displayDatabaseExpenses(expenses) {
+            const container = document.getElementById('expensesList');
+            
+            if (currentExpenses.length > 0) {
+                container.innerHTML += '<hr style="margin: 20px 0;"><h3>💾 Saved Expenses from Database:</h3>';
+            } else {
+                container.innerHTML = '<h3>💾 Saved Expenses from Database:</h3>';
+            }
+            
+            if (expenses.length === 0) {
+                container.innerHTML += '<p style="color: #666; text-align: center;">No expenses found in database.</p>';
+                return;
+            }
+            
+            expenses.forEach(expense => {
+                const expenseDiv = document.createElement('div');
+                expenseDiv.className = 'expense-item';
+                expenseDiv.style.borderLeftColor = '#28a745';
+                expenseDiv.innerHTML = `
+                    <div class="expense-header">
+                        <div class="expense-description">${expense.description}</div>
+                        <div class="expense-amount">$${expense.amount}</div>
+                    </div>
+                    <div class="expense-details">
+                        <div><strong>Category:</strong> ${expense.category}</div>
+                        <div><strong>Sub-category:</strong> ${expense.subCategory || 'N/A'}</div>
+                        <div><strong>Paid by:</strong> ${expense.paidBy}</div>
+                        <div><strong>Type:</strong> ${expense.type}</div>
+                        <div><strong>Source:</strong> ${expense.source || 'N/A'}</div>
+                        <div><strong>Date:</strong> ${expense.date}</div>
+                    </div>
+                    ${expense.notes ? `<div style="margin-top: 8px;"><strong>Notes:</strong> ${expense.notes}</div>` : ''}
+                `;
+                container.appendChild(expenseDiv);
+            });
+        }
+        
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('statusMessage');
+            messageDiv.className = `status-message ${type}-message`;
+            messageDiv.textContent = message;
+            
+            setTimeout(() => {
+                messageDiv.className = '';
+                messageDiv.textContent = '';
+            }, 5000);
+        }
+        
+        // Load expenses on page load
+        loadExpenses();
+    </script>
+</body>
+</html>
