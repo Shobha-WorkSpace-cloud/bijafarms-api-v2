@@ -115,11 +115,6 @@ router.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, f
                     console.error('Error fetching expenses:', error.message);
                     return [2 /*return*/, res.status(500).json({ error: error.message })];
                 }
-                // Log the structure of the first expense to understand the table schema
-                if (data && data.length > 0) {
-                    console.log("Sample expense from database:", JSON.stringify(data[0], null, 2));
-                    console.log("Available columns:", Object.keys(data[0]));
-                }
                 res.status(200).json(data);
                 return [3 /*break*/, 3];
             case 2:

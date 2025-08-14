@@ -29,11 +29,10 @@ const writeExpenses = async (expenses: ExpenseRecord[]): Promise<void> => {
     for (const expense of expenses) {
       console.log("Attempting to insert expense:", expense);
 
-      // Try with just the core fields that definitely exist
+      // Insert only fields that exist in the table (excluding category)
       const expenseData = {
         description: expense.description,
         amount: expense.amount,
-        category: expense.category,
         type: expense.type,
         date: expense.date,
         paidBy: expense.paidBy,
