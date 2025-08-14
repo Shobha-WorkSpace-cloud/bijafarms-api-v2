@@ -509,7 +509,7 @@
             const currentValue = categoryFilter.value;
             const categories = new Set();
 
-            [...currentExpenses, ...databaseExpenses].forEach(expense => {
+            databaseExpenses.forEach(expense => {
                 if (expense.category) {
                     categories.add(expense.category);
                 }
