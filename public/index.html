@@ -333,9 +333,102 @@
         
         <div class="expenses-list">
             <h2>📋 Current Expenses</h2>
+
+            <!-- Filters and Controls -->
+            <div class="controls-container">
+                <div class="filter-section">
+                    <label class="filter-label">🔍 Filters & Search</label>
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label class="form-label">Search</label>
+                            <input type="text" id="searchInput" class="form-input" placeholder="Search description, notes...">
+                        </div>
+                        <div class="filter-group">
+                            <label class="form-label">Category</label>
+                            <select id="categoryFilter" class="form-input">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="form-label">Type</label>
+                            <select id="typeFilter" class="form-input">
+                                <option value="">All Types</option>
+                                <option value="expense">Expense</option>
+                                <option value="income">Income</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="form-label">Min Amount</label>
+                            <input type="number" id="minAmount" class="form-input" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="filter-group">
+                            <label class="form-label">Max Amount</label>
+                            <input type="number" id="maxAmount" class="form-input" placeholder="1000.00" step="0.01">
+                        </div>
+                        <div class="filter-group">
+                            <button type="button" class="clear-filters-btn" onclick="clearFilters()">Clear Filters</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <label class="filter-label">📊 Sort By</label>
+                    <div class="sort-controls">
+                        <select id="sortField" class="sort-select">
+                            <option value="date">Date</option>
+                            <option value="amount">Amount</option>
+                            <option value="description">Description</option>
+                            <option value="category">Category</option>
+                            <option value="type">Type</option>
+                        </select>
+                        <select id="sortOrder" class="sort-select">
+                            <option value="desc">Descending</option>
+                            <option value="asc">Ascending</option>
+                        </select>
+                        <span class="pagination-info">Items per page:</span>
+                        <select id="itemsPerPage" class="sort-select">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Summary -->
+            <div id="resultsSummary" class="results-summary" style="display: none;"></div>
+
+            <!-- Pagination Controls -->
+            <div id="paginationTop" class="pagination-container" style="display: none;">
+                <div class="pagination-info">
+                    <span id="paginationInfo">Showing 0 - 0 of 0 expenses</span>
+                </div>
+                <div class="pagination-controls">
+                    <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">‹ Previous</button>
+                    <div id="pageNumbers"></div>
+                    <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">Next ›</button>
+                </div>
+            </div>
+
             <div id="expensesList"></div>
-            <button type="button" class="btn-primary" onclick="loadExpenses()">Refresh Expenses</button>
-            <button type="button" class="btn-primary" onclick="submitAllExpenses()" style="margin-left: 10px;">💾 Save All to Database</button>
+
+            <!-- Bottom Pagination -->
+            <div id="paginationBottom" class="pagination-container" style="display: none;">
+                <div class="pagination-info">
+                    <span id="paginationInfoBottom">Showing 0 - 0 of 0 expenses</span>
+                </div>
+                <div class="pagination-controls">
+                    <button class="pagination-btn" id="prevBtnBottom" onclick="changePage(-1)">‹ Previous</button>
+                    <div id="pageNumbersBottom"></div>
+                    <button class="pagination-btn" id="nextBtnBottom" onclick="changePage(1)">Next ›</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button type="button" class="btn-primary" onclick="loadExpenses()">Refresh Expenses</button>
+                <button type="button" class="btn-primary" onclick="submitAllExpenses()" style="margin-left: 10px;">💾 Save All to Database</button>
+            </div>
         </div>
     </div>
 
