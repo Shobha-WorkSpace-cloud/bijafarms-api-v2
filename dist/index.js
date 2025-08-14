@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var expenses_1 = __importDefault(require("./expenses"));
 var app = (0, express_1.default)();
+app.use(express_1.default.json());
+app.use(express_1.default.static('public'));
 app.use('/expenses', expenses_1.default);
 app.get('/', function (req, res) {
     var name = process.env.NAME || 'World';

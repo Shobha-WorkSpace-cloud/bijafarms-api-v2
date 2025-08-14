@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,30 +50,147 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.writeExpenses = void 0;
 var express_1 = __importDefault(require("express"));
 var supabaseClient_1 = __importDefault(require("./supabaseClient"));
 var router = express_1.default.Router();
+var writeExpenses = function (expenses) { return __awaiter(void 0, void 0, void 0, function () {
+    var _i, expenses_1, expense, _a, categoryData, categoryError, _b, newCategory, createError, categoryId, categoryId, expenseData, _c, data, insertError, error_1;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
+            case 0:
+                _d.trys.push([0, 9, , 10]);
+                if (!expenses || expenses.length === 0) {
+                    console.warn("No expenses to write");
+                    return [2 /*return*/];
+                }
+                console.log("Processing expenses for insert:", expenses);
+                _i = 0, expenses_1 = expenses;
+                _d.label = 1;
+            case 1:
+                if (!(_i < expenses_1.length)) return [3 /*break*/, 8];
+                expense = expenses_1[_i];
+                console.log("Attempting to insert expense:", expense);
+                return [4 /*yield*/, supabaseClient_1.default
+                        .from('categories')
+                        .select('id')
+                        .eq('name', expense.category)
+                        .single()];
+            case 2:
+                _a = _d.sent(), categoryData = _a.data, categoryError = _a.error;
+                if (!categoryError) return [3 /*break*/, 4];
+                console.error("Error fetching category for ".concat(expense.category, ":"), categoryError);
+                return [4 /*yield*/, supabaseClient_1.default
+                        .from('categories')
+                        .insert([{ name: expense.category }])
+                        .select('id')
+                        .single()];
+            case 3:
+                _b = _d.sent(), newCategory = _b.data, createError = _b.error;
+                if (createError) {
+                    console.error("Error creating category ".concat(expense.category, ":"), createError);
+                    throw createError;
+                }
+                console.log("Created new category: ".concat(expense.category, " with ID: ").concat(newCategory.id));
+                categoryId = newCategory.id;
+                return [3 /*break*/, 5];
+            case 4:
+                categoryId = categoryData.id;
+                console.log("Found category ".concat(expense.category, " with ID: ").concat(categoryId));
+                _d.label = 5;
+            case 5:
+                expenseData = {
+                    description: expense.description,
+                    amount: expense.amount,
+                    type: expense.type,
+                    date: expense.date,
+                    paidBy: expense.paidBy,
+                    categoryId: categoryId,
+                    subCategory: expense.subCategory || null,
+                    source: expense.source || null,
+                    notes: expense.notes || null,
+                };
+                console.log("Inserting expense data:", expenseData);
+                return [4 /*yield*/, supabaseClient_1.default
+                        .from('expenses')
+                        .insert([expenseData])
+                        .select()];
+            case 6:
+                _c = _d.sent(), data = _c.data, insertError = _c.error;
+                if (insertError) {
+                    console.error("Supabase insert error for expense:", expense.description);
+                    console.error("Full error details:", JSON.stringify(insertError, null, 2));
+                    throw insertError;
+                }
+                console.log("Successfully inserted expense:", data);
+                _d.label = 7;
+            case 7:
+                _i++;
+                return [3 /*break*/, 1];
+            case 8:
+                console.log("All expenses written successfully");
+                return [3 /*break*/, 10];
+            case 9:
+                error_1 = _d.sent();
+                console.error("Error writing expenses:", error_1);
+                throw error_1;
+            case 10: return [2 /*return*/];
+        }
+    });
+}); };
+exports.writeExpenses = writeExpenses;
 router.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, data, error, error_1;
+    var _a, data, error, transformedData, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 return [4 /*yield*/, supabaseClient_1.default
                         .from('expenses')
-                        .select('*')];
+                        .select("\n        *,\n        categories (\n          id,\n          name\n        )\n      ")];
             case 1:
                 _a = _b.sent(), data = _a.data, error = _a.error;
                 if (error) {
                     console.error('Error fetching expenses:', error.message);
                     return [2 /*return*/, res.status(500).json({ error: error.message })];
                 }
-                res.status(200).json(data);
+                transformedData = data === null || data === void 0 ? void 0 : data.map(function (expense) {
+                    var _a;
+                    return (__assign(__assign({}, expense), { category: ((_a = expense.categories) === null || _a === void 0 ? void 0 : _a.name) || 'Unknown' }));
+                });
+                res.status(200).json(transformedData);
                 return [3 /*break*/, 3];
             case 2:
-                error_1 = _b.sent();
-                console.error('Unexpected error:', error_1.message);
+                error_2 = _b.sent();
+                console.error('Unexpected error:', error_2.message);
                 res.status(500).json({ error: 'An unexpected error occurred.' });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.post('/write', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var expenses, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                expenses = req.body.expenses;
+                if (!expenses || !Array.isArray(expenses)) {
+                    return [2 /*return*/, res.status(400).json({ error: 'Invalid request: expenses array is required' })];
+                }
+                return [4 /*yield*/, writeExpenses(expenses)];
+            case 1:
+                _a.sent();
+                res.status(200).json({
+                    message: "Successfully wrote ".concat(expenses.length, " expenses to database"),
+                    count: expenses.length
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                error_3 = _a.sent();
+                console.error('Error in POST /expenses/write:', error_3.message);
+                res.status(500).json({ error: error_3.message });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
