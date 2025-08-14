@@ -125,59 +125,8 @@ router.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); });
-router.get('/test-connection', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, tables, tablesError, testExpense, _b, insertData, insertError, error_3;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _c.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, supabaseClient_1.default
-                        .from('information_schema.tables')
-                        .select('table_name')
-                        .eq('table_schema', 'public')];
-            case 1:
-                _a = _c.sent(), tables = _a.data, tablesError = _a.error;
-                console.log('Available tables:', tables);
-                console.log('Tables error:', tablesError);
-                testExpense = {
-                    id: 'test-' + Date.now(),
-                    description: 'Test expense',
-                    amount: 10.50,
-                    category: 'Test',
-                    type: 'expense',
-                    date: new Date().toISOString().split('T')[0],
-                    paidBy: 'Test User',
-                    subCategory: 'Test Sub',
-                    source: 'Test Source',
-                    notes: 'Test notes'
-                };
-                return [4 /*yield*/, supabaseClient_1.default
-                        .from('expenses')
-                        .insert([testExpense])
-                        .select()];
-            case 2:
-                _b = _c.sent(), insertData = _b.data, insertError = _b.error;
-                console.log('Test insert data:', insertData);
-                console.log('Test insert error:', insertError);
-                res.json({
-                    tables: tables || 'Error getting tables',
-                    tablesError: tablesError,
-                    insertData: insertData,
-                    insertError: insertError,
-                    testExpense: testExpense
-                });
-                return [3 /*break*/, 4];
-            case 3:
-                error_3 = _c.sent();
-                console.error('Test connection error:', error_3);
-                res.status(500).json({ error: error_3.message });
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); });
 router.post('/write', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var expenses, error_4;
+    var expenses, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -195,9 +144,9 @@ router.post('/write', function (req, res) { return __awaiter(void 0, void 0, voi
                 });
                 return [3 /*break*/, 3];
             case 2:
-                error_4 = _a.sent();
-                console.error('Error in POST /expenses/write:', error_4.message);
-                res.status(500).json({ error: error_4.message });
+                error_3 = _a.sent();
+                console.error('Error in POST /expenses/write:', error_3.message);
+                res.status(500).json({ error: error_3.message });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
