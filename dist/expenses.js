@@ -44,48 +44,58 @@ var express_1 = __importDefault(require("express"));
 var supabaseClient_1 = __importDefault(require("./supabaseClient"));
 var router = express_1.default.Router();
 var writeExpenses = function (expenses) { return __awaiter(void 0, void 0, void 0, function () {
-    var expn, _a, data, error, error_1;
+    var _i, expenses_1, expense, expenseData, _a, data, error, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                _b.trys.push([0, 5, , 6]);
                 if (!expenses || expenses.length === 0) {
                     console.warn("No expenses to write");
                     return [2 /*return*/];
                 }
                 console.log("Processing expenses for insert:", expenses);
-                expn = expenses.map(function (expense) {
-                    return {
-                        id: expense.id,
-                        date: expense.date,
-                        type: expense.type,
-                        description: expense.description,
-                        amount: expense.amount,
-                        paidBy: expense.paidBy,
-                        category: expense.category, // Use the category name directly for now
-                        subCategory: expense.subCategory,
-                        source: expense.source,
-                        notes: expense.notes,
-                    };
-                });
-                console.log("Prepared expenses for Supabase:", expn);
+                _i = 0, expenses_1 = expenses;
+                _b.label = 1;
+            case 1:
+                if (!(_i < expenses_1.length)) return [3 /*break*/, 4];
+                expense = expenses_1[_i];
+                console.log("Attempting to insert expense:", expense);
+                expenseData = {
+                    description: expense.description,
+                    amount: expense.amount,
+                    category: expense.category,
+                    type: expense.type,
+                    date: expense.date,
+                    paidBy: expense.paidBy,
+                    subCategory: expense.subCategory || null,
+                    source: expense.source || null,
+                    notes: expense.notes || null,
+                };
+                console.log("Inserting expense data:", expenseData);
                 return [4 /*yield*/, supabaseClient_1.default
                         .from('expenses')
-                        .insert(expn)
+                        .insert([expenseData])
                         .select()];
-            case 1:
+            case 2:
                 _a = _b.sent(), data = _a.data, error = _a.error;
                 if (error) {
-                    console.error("Supabase insert error:", error);
+                    console.error("Supabase insert error for expense:", expense.description);
+                    console.error("Full error details:", JSON.stringify(error, null, 2));
                     throw error;
                 }
-                console.log("Expenses written to Supabase:", data);
-                return [3 /*break*/, 3];
-            case 2:
+                console.log("Successfully inserted expense:", data);
+                _b.label = 3;
+            case 3:
+                _i++;
+                return [3 /*break*/, 1];
+            case 4:
+                console.log("All expenses written successfully");
+                return [3 /*break*/, 6];
+            case 5:
                 error_1 = _b.sent();
                 console.error("Error writing expenses:", error_1);
                 throw error_1;
-            case 3: return [2 /*return*/];
+            case 6: return [2 /*return*/];
         }
     });
 }); };
