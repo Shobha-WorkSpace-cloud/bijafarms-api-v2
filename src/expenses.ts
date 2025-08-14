@@ -81,5 +81,25 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
+router.post('/write', async (req: Request, res: Response) => {
+  try {
+    const { expenses } = req.body;
+
+    if (!expenses || !Array.isArray(expenses)) {
+      return res.status(400).json({ error: 'Invalid request: expenses array is required' });
+    }
+
+    await writeExpenses(expenses);
+    res.status(200).json({
+      message: `Successfully wrote ${expenses.length} expenses to database`,
+      count: expenses.length
+    });
+  } catch (error: any) {
+    console.error('Error in POST /expenses/write:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Export the router so it can be used in other files
 export default router;
+export { writeExpenses };
