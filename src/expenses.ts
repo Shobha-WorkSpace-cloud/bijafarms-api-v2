@@ -82,51 +82,6 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/test-connection', async (req: Request, res: Response) => {
-  try {
-    // Test basic connection
-    const { data: tables, error: tablesError } = await supabase
-      .from('information_schema.tables')
-      .select('table_name')
-      .eq('table_schema', 'public');
-
-    console.log('Available tables:', tables);
-    console.log('Tables error:', tablesError);
-
-    // Test simple insert with minimal data
-    const testExpense = {
-      id: 'test-' + Date.now(),
-      description: 'Test expense',
-      amount: 10.50,
-      category: 'Test',
-      type: 'expense',
-      date: new Date().toISOString().split('T')[0],
-      paidBy: 'Test User',
-      subCategory: 'Test Sub',
-      source: 'Test Source',
-      notes: 'Test notes'
-    };
-
-    const { data: insertData, error: insertError } = await supabase
-      .from('expenses')
-      .insert([testExpense])
-      .select();
-
-    console.log('Test insert data:', insertData);
-    console.log('Test insert error:', insertError);
-
-    res.json({
-      tables: tables || 'Error getting tables',
-      tablesError,
-      insertData,
-      insertError,
-      testExpense
-    });
-  } catch (error: any) {
-    console.error('Test connection error:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
 
 router.post('/write', async (req: Request, res: Response) => {
   try {
