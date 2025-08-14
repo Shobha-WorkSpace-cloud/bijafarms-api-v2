@@ -28,7 +28,15 @@ const writeExpenses = async (expenses: ExpenseRecord[]): Promise<void> => {
     // Let's try inserting one expense first to see the exact error
     for (const expense of expenses) {
       console.log("Attempting to insert expense:", expense);
+      const { data: cat, error } = await supabase
+          .from('categories')
+          .select("id")
+          .eq('name', expense.category);
 
+        if (error) {
+          console.error(`Error fetching category for ${expense.category}:`, error);
+        }
+      console.log('category id is' + cat);
       // Insert only fields that exist in the table (excluding category)
       const expenseData = {
         description: expense.description,
@@ -36,6 +44,7 @@ const writeExpenses = async (expenses: ExpenseRecord[]): Promise<void> => {
         type: expense.type,
         date: expense.date,
         paidBy: expense.paidBy,
+        categoryId:cat,
         subCategory: expense.subCategory || null,
         source: expense.source || null,
         notes: expense.notes || null,
