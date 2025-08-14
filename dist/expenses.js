@@ -42,8 +42,65 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var supabaseClient_1 = __importDefault(require("./supabaseClient"));
 var router = express_1.default.Router();
+var writeExpenses = function (expenses) { return __awaiter(void 0, void 0, void 0, function () {
+    var expn, _a, data, error, error_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 3, , 4]);
+                if (!expenses || expenses.length === 0) {
+                    console.warn("No expenses to write");
+                    return [2 /*return*/];
+                }
+                return [4 /*yield*/, Promise.all(expenses.map(function (expense) { return __awaiter(void 0, void 0, void 0, function () {
+                        var _a, cat, error;
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
+                                case 0: return [4 /*yield*/, supabaseClient_1.default
+                                        .from('categories')
+                                        .select("id")
+                                        .eq('name', expense.category)];
+                                case 1:
+                                    _a = _b.sent(), cat = _a.data, error = _a.error;
+                                    if (error) {
+                                        console.error("Error fetching category for ".concat(expense.category, ":"), error);
+                                    }
+                                    // You can use cat[0] if you expect a single category, or handle as needed
+                                    return [2 /*return*/, {
+                                            id: expense.id,
+                                            date: expense.date,
+                                            type: expense.type,
+                                            description: expense.description,
+                                            amount: expense.amount,
+                                            paidBy: expense.paidBy,
+                                            category: cat && cat.length > 0 ? cat[0].id : expense.category,
+                                            subCategory: expense.subCategory,
+                                            source: expense.source,
+                                            notes: expense.notes,
+                                        }];
+                            }
+                        });
+                    }); }))];
+            case 1:
+                expn = _b.sent();
+                return [4 /*yield*/, supabaseClient_1.default
+                        .from('expenses')
+                        .insert(expn)
+                        .select()];
+            case 2:
+                _a = _b.sent(), data = _a.data, error = _a.error;
+                console.log("Expenses written to Supabase:", data);
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _b.sent();
+                console.error("Error writing expenses:", error_1);
+                throw error_1;
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
 router.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, data, error, error_1;
+    var _a, data, error, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -60,8 +117,8 @@ router.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, f
                 res.status(200).json(data);
                 return [3 /*break*/, 3];
             case 2:
-                error_1 = _b.sent();
-                console.error('Unexpected error:', error_1.message);
+                error_2 = _b.sent();
+                console.error('Unexpected error:', error_2.message);
                 res.status(500).json({ error: 'An unexpected error occurred.' });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
