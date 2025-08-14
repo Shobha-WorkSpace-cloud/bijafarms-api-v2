@@ -528,6 +528,7 @@
             // Apply filters (only database expenses now)
             filteredExpenses = databaseExpenses.filter(expense => {
                 const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const categoryFilter = document.getElementById('categoryFilter').value;
                 const typeFilter = document.getElementById('typeFilter').value;
                 const minAmount = parseFloat(document.getElementById('minAmount').value) || 0;
                 const maxAmount = parseFloat(document.getElementById('maxAmount').value) || Infinity;
@@ -536,10 +537,11 @@
                     expense.description.toLowerCase().includes(searchTerm) ||
                     (expense.notes && expense.notes.toLowerCase().includes(searchTerm));
 
+                const matchesCategory = categoryFilter === '' || expense.category === categoryFilter;
                 const matchesType = typeFilter === '' || expense.type === typeFilter;
                 const matchesAmount = expense.amount >= minAmount && expense.amount <= maxAmount;
 
-                return matchesSearch && matchesType && matchesAmount;
+                return matchesSearch && matchesCategory && matchesType && matchesAmount;
             });
 
             // Apply sorting
