@@ -76,12 +76,6 @@ router.get('/', async (req: Request, res: Response) => {
       return res.status(500).json({ error: error.message });
     }
 
-    // Log the structure of the first expense to understand the table schema
-    if (data && data.length > 0) {
-      console.log("Sample expense from database:", JSON.stringify(data[0], null, 2));
-      console.log("Available columns:", Object.keys(data[0]));
-    }
-
     res.status(200).json(data);
   } catch (error: any) {
     console.error('Unexpected error:', error.message);
