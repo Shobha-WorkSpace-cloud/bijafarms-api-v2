@@ -527,10 +527,8 @@
         }
 
         function applyFiltersAndSort() {
-            const allExpenses = [...currentExpenses, ...databaseExpenses];
-
-            // Apply filters
-            filteredExpenses = allExpenses.filter(expense => {
+            // Apply filters (only database expenses now)
+            filteredExpenses = databaseExpenses.filter(expense => {
                 const searchTerm = document.getElementById('searchInput').value.toLowerCase();
                 const categoryFilter = document.getElementById('categoryFilter').value;
                 const typeFilter = document.getElementById('typeFilter').value;
