@@ -25,17 +25,46 @@ const writeExpenses = async (expenses: ExpenseRecord[]): Promise<void> => {
 
     console.log("Processing expenses for insert:", expenses);
 
-    // Let's try inserting one expense first to see the exact error
+    // Process expenses with category lookup
     for (const expense of expenses) {
       console.log("Attempting to insert expense:", expense);
 
-      // Insert only fields that exist in the table (excluding category)
+      // Look up category ID from categories table
+      const { data: categoryData, error: categoryError } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('name', expense.category)
+        .single();
+
+      if (categoryError) {
+        console.error(`Error fetching category for ${expense.category}:`, categoryError);
+        // If category doesn't exist, create it
+        const { data: newCategory, error: createError } = await supabase
+          .from('categories')
+          .insert([{ name: expense.category }])
+          .select('id')
+          .single();
+
+        if (createError) {
+          console.error(`Error creating category ${expense.category}:`, createError);
+          throw createError;
+        }
+
+        console.log(`Created new category: ${expense.category} with ID: ${newCategory.id}`);
+        var categoryId = newCategory.id;
+      } else {
+        var categoryId = categoryData.id;
+        console.log(`Found category ${expense.category} with ID: ${categoryId}`);
+      }
+
+      // Insert expense with categoryId
       const expenseData = {
         description: expense.description,
         amount: expense.amount,
         type: expense.type,
         date: expense.date,
         paidBy: expense.paidBy,
+        categoryId: categoryId,
         subCategory: expense.subCategory || null,
         source: expense.source || null,
         notes: expense.notes || null,
