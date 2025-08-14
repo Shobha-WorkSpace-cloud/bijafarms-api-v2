@@ -731,16 +731,17 @@
         
         function removeExpense(index) {
             currentExpenses.splice(index, 1);
-            displayExpenses();
+            updateCategoryFilter();
+            applyFiltersAndSort();
             showMessage('Expense removed from list.', 'success');
         }
-        
+
         async function submitAllExpenses() {
             if (currentExpenses.length === 0) {
                 showMessage('No expenses to save. Add some expenses first!', 'error');
                 return;
             }
-            
+
             try {
                 const response = await fetch('/expenses/write', {
                     method: 'POST',
@@ -749,13 +750,21 @@
                     },
                     body: JSON.stringify({ expenses: currentExpenses })
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (response.ok) {
                     showMessage(`Successfully saved ${currentExpenses.length} expenses to database!`, 'success');
+
+                    // Move saved expenses to database expenses
+                    databaseExpenses.push(...currentExpenses);
                     currentExpenses = [];
-                    displayExpenses();
+
+                    updateCategoryFilter();
+                    currentPage = 1;
+                    applyFiltersAndSort();
+
+                    // Refresh from server to get any server-side changes
                     loadExpenses();
                 } else {
                     showMessage(`Error: ${result.error}`, 'error');
@@ -764,57 +773,23 @@
                 showMessage(`Network error: ${error.message}`, 'error');
             }
         }
-        
+
         async function loadExpenses() {
             try {
                 const response = await fetch('/expenses');
                 const expenses = await response.json();
-                
+
                 if (response.ok) {
-                    displayDatabaseExpenses(expenses);
+                    databaseExpenses = expenses;
+                    updateCategoryFilter();
+                    applyFiltersAndSort();
+                    showMessage(`Loaded ${expenses.length} expenses from database.`, 'success');
                 } else {
                     showMessage(`Error loading expenses: ${expenses.error}`, 'error');
                 }
             } catch (error) {
                 showMessage(`Network error: ${error.message}`, 'error');
             }
-        }
-        
-        function displayDatabaseExpenses(expenses) {
-            const container = document.getElementById('expensesList');
-            
-            if (currentExpenses.length > 0) {
-                container.innerHTML += '<hr style="margin: 20px 0;"><h3>💾 Saved Expenses from Database:</h3>';
-            } else {
-                container.innerHTML = '<h3>💾 Saved Expenses from Database:</h3>';
-            }
-            
-            if (expenses.length === 0) {
-                container.innerHTML += '<p style="color: #666; text-align: center;">No expenses found in database.</p>';
-                return;
-            }
-            
-            expenses.forEach(expense => {
-                const expenseDiv = document.createElement('div');
-                expenseDiv.className = 'expense-item';
-                expenseDiv.style.borderLeftColor = '#28a745';
-                expenseDiv.innerHTML = `
-                    <div class="expense-header">
-                        <div class="expense-description">${expense.description}</div>
-                        <div class="expense-amount">$${expense.amount}</div>
-                    </div>
-                    <div class="expense-details">
-                        <div><strong>Category:</strong> ${expense.category}</div>
-                        <div><strong>Sub-category:</strong> ${expense.subCategory || 'N/A'}</div>
-                        <div><strong>Paid by:</strong> ${expense.paidBy}</div>
-                        <div><strong>Type:</strong> ${expense.type}</div>
-                        <div><strong>Source:</strong> ${expense.source || 'N/A'}</div>
-                        <div><strong>Date:</strong> ${expense.date}</div>
-                    </div>
-                    ${expense.notes ? `<div style="margin-top: 8px;"><strong>Notes:</strong> ${expense.notes}</div>` : ''}
-                `;
-                container.appendChild(expenseDiv);
-            });
         }
         
         function showMessage(message, type) {
