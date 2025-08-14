@@ -612,18 +612,13 @@
             // Display expenses
             container.innerHTML = '';
             pageExpenses.forEach((expense, index) => {
-                const originalIndex = filteredExpenses.indexOf(expense);
-                const isFromDatabase = databaseExpenses.some(dbExpense => dbExpense.id === expense.id);
-
                 const expenseDiv = document.createElement('div');
                 expenseDiv.className = 'expense-item';
-                if (isFromDatabase) {
-                    expenseDiv.style.borderLeftColor = '#28a745';
-                }
+                expenseDiv.style.borderLeftColor = '#28a745';
 
                 expenseDiv.innerHTML = `
                     <div class="expense-header">
-                        <div class="expense-description">${expense.description} ${isFromDatabase ? '💾' : '📝'}</div>
+                        <div class="expense-description">${expense.description} 💾</div>
                         <div class="expense-amount">$${expense.amount.toFixed(2)}</div>
                     </div>
                     <div class="expense-details">
@@ -635,7 +630,7 @@
                         <div><strong>Date:</strong> ${expense.date}</div>
                     </div>
                     ${expense.notes ? `<div style="margin-top: 8px;"><strong>Notes:</strong> ${expense.notes}</div>` : ''}
-                    ${!isFromDatabase ? `<button onclick="removeExpense(${currentExpenses.indexOf(expense)})" class="btn-secondary" style="margin-top: 10px;">Remove</button>` : '<div style="margin-top: 10px; font-size: 12px; color: #28a745;">💾 Saved to database</div>'}
+                    <div style="margin-top: 10px; font-size: 12px; color: #28a745;">💾 Saved to database</div>
                 `;
                 container.appendChild(expenseDiv);
             });
